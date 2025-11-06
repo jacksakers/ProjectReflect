@@ -1,0 +1,136 @@
+You've got it. This is the most important part to get right. A simple, well-structured database will make building the app 100x easier.
+
+Based on all the features we designed, here is a simple and query-able database structure for Firestore.
+
+We'll use a "flat" data structure. This means we avoid nesting data too deep. Instead of putting a user's entries inside their user document (which is bad!), we'll put them in their own "top-level" collection and link them with the User's ID.
+
+Here are the main collections we'll need:
+
+1. users Collection
+This stores user-specific data that isn't a journal entry.
+
+Document ID: uid (This will be the unique ID from Firebase Authentication)
+
+Path: users/{uid}
+
+Example Document (users/aBcDe123...):
+
+JSON
+
+{
+  "email": "youremail@example.com",
+  "displayName": "Jane D.",
+  "createdAt": "2025-11-06T19:00:00Z", // Firestore Timestamp
+  "settings": {
+    "dailyReflectionTime": "21:00",
+    "quickCheckinEnabled": true,
+  },
+  "currentPlant": {
+    "plantType": "Fern", // 'Fern', 'Rose', 'Cactus'
+    "growthPoints": 7,  // Watered 7 times
+    "stage": "sprout", // 'seed', 'sprout', 'growing', 'flowered'
+    "startedAt": "2025-11-01T10:00:00Z"
+  }
+}
+2. garden Subcollection
+This will be a "trophy case" for all the plants a user has fully grown. It's a subcollection inside a user's document.
+
+Path: users/{uid}/garden/{plantId}
+
+Example Document (users/aBcDe123.../garden/myFirstFern):
+
+JSON
+
+{
+  "plantType": "Fern",
+  "fullyGrownAt": "2025-11-30T21:15:00Z",
+  "startedAt": "2025-11-01T10:00:00Z"
+}
+3. entries Collection (The Most Important One)
+This is a top-level collection that holds all journal entries, for all users. We'll use Firestore's Security Rules to make sure users can only see their own.
+
+Document ID: Auto-generated ID (e.g., xYqZ...)
+
+Path: entries/{entryId}
+
+Why do it this way?
+
+Querying: It's much easier to get "all your entries" or "your entry from 1 year ago" from one big collection than to look inside a user document.
+
+Performance: It's super fast and scalable. A user can have 10,000 entries and it won't slow anything down.
+
+Example Document (entries/xYqZ...):
+
+JSON
+
+{
+  // --- Core Info & Query Fields ---
+  "authorUid": "aBcDe123...", // The user's ID. CRITICAL for queries!
+  "createdAt": "2025-11-06T21:10:00Z", // Timestamp for sorting
+  
+  // --- Fields for "On This Day" Query ---
+  // We'll add these duplicate fields to make querying easy.
+  "createdDay": 6,   // number
+  "createdMonth": 11, // number
+  "createdYear": 2025, // number
+  
+  // --- Entry Content ---
+  "entryType": "daily_reflection", // 'daily_reflection', 'quick_checkin', 'quick_thought'
+  "mood": "calm", // 'happy', 'stressed', 'calm', etc.
+  
+  "content": {
+    // --- For "Daily Reflection" ---
+    "triage_thought": "Thinking about the big presentation.",
+    "triage_feeling": "Tense Shoulders",
+    "meditation": "5-Minute Body Scan",
+    "post_reflection": "I noticed how much tension I was holding in my jaw.",
+    
+    // --- For "Quick Thought" ---
+    "quick_thought": "Just had a great idea for dinner."
+  },
+
+  "attachedPhotoUrl": "gs://project-reflect/user_uploads/aBcDe123.../image.jpg" // (Optional)
+}
+4. timeCapsules Collection (For V2)
+We'll plan for this now. This will store the "Ask Future You" messages.
+
+Path: timeCapsules/{capsuleId}
+
+Example Document (timeCapsules/rStUv...):
+
+JSON
+
+{
+  "authorUid": "aBcDe123...",
+  "createdAt": "2025-11-06T21:15:00Z",
+  "openAt": "2026-11-06T21:15:00Z", // The timestamp to "deliver" this
+  "question": "Did that presentation even matter a year later?",
+  "isDelivered": false, // We'll flip this to 'true' after delivery
+  "linkedEntryId": "xYqZ..." // (Optional) Link to the entry that prompted it
+}
+How This Structure Solves Our Needs:
+To get all Journal entries (for the "Journal" tab):
+
+Query entries collection
+
+WHERE authorUid == "your-uid"
+
+ORDER BY createdAt DESC
+
+To get "On This Day" entries:
+
+Get today's date (e.g., November 6th).
+
+Query entries collection
+
+WHERE authorUid == "your-uid"
+
+WHERE createdMonth == 11
+
+WHERE createdDay == 6
+
+To get the user's current plant (for the "Home" tab):
+
+Just read users/{uid} document and get the currentPlant map.
+
+This structure is simple, secure, and built for exactly the queries you need to make.

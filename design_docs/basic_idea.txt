@@ -1,0 +1,115 @@
+📝 Project: Reflect (Design Document V1)
+This document outlines the vision, features, and core user flow for a personal mindfulness PWA. We can workshop the artisanal name later.
+
+1. Project Vision & Goal
+To create a personal refuge on your phone, not another chore. It's a mindfulness tool designed to replace aimless social media scrolling with structured, valuable reflection. The primary user (User Zero) is you. Success is defined by your consistent, personal use.
+
+2. Core Philosophy
+Personal First: The app must be 100% functional and valuable for a single user.
+
+Gentle Engagement: No high-pressure, "Duolingo-owl-of-death" streaks. The gamification (the plant) is about nurturing, not punishing.
+
+Tangible Reflection: Encourage real-world actions (physical drawing) and tangible insights (data you can use).
+
+3. Tech Stack (As Defined)
+Frontend: React (with Vite)
+
+PWA (Progressive Web App): For home-screen install and notifications.
+
+Backend: Firebase
+
+Firestore: Database for entries, moods, user settings.
+
+Firebase Auth: User login.
+
+Firebase Storage: To store user-uploaded photos (of their drawings/journals).
+
+🚀 Core Features (MVP)
+This is the focused V1. We'll build just enough to make it your go-to app.
+
+1. The "Quick Check-in"
+Trigger: An interactive PWA notification (e.g., 3 times a day).
+
+UI: "How are you feeling right now?" with 5 emoji options (e.g., 😫, 😕, 😐, 🙂, 😄).
+
+Action: User taps an emoji in the notification.
+
+Result: The mood is logged with a timestamp. This single tap counts as "watering" the plant. It's the lowest-friction engagement possible.
+
+2. The "Daily Reflection" (The Core Loop)
+This is the main, scheduled "session" (e.g., at 9 PM).
+
+Step 1: The Triage
+
+The app opens and asks 2-3 simple questions to set the context:
+
+"What's the loudest thought in your mind?" (Text input)
+
+"Where in your body do you feel it?" (e.g., Tense Shoulders, Jittery Stomach, Calm Chest)
+
+Step 2: The Suggested Meditation
+
+Based on the answers (e.g., "loud thought" + "tense shoulders"), the app suggests a 5-minute, text-based meditation.
+
+Example: "It sounds like your mind is busy. Let's try a 5-minute 'Body Scan' meditation to ground you."
+
+Step 3: The Timer & Guide
+
+The meditation screen will show:
+
+Text Instructions: Simple, clear steps. ("Find a quiet seat. Close your eyes. We'll start with 10 deep breaths...")
+
+Breathing Visual: A simple, animated circle that expands and contracts to guide breathing patterns (e.g., "In... Out...").
+
+Timer: A 5-minute countdown.
+
+Audio Cue: A local audio file (a simple ding.mp3 bundled with the app) that chimes at the beginning and end. No streaming, no hosting.
+
+Step 4: The Post-Reflection
+
+Immediately after the timer, the app prompts with questions specific to the meditation:
+
+(After 'Body Scan'): "What sensation did you notice that you weren't aware of before?"
+
+(After 'Breathing'): "Did you find your mind wandering? What did it wander to?"
+
+Step 5: The Physical Capture (Optional)
+
+A simple prompt: "Did you write or draw anything you want to save?"
+
+A [Take Photo] button that opens the phone's native camera.
+
+The photo is uploaded to Firebase Storage and linked to the journal entry.
+
+3. The Garden (Gamification)
+Core Idea: You nurture a virtual plant, which represents your mindfulness practice.
+
+Flow:
+
+You start with a Seed.
+
+Each check-in or reflection "waters" it, increasing a growth counter (e.g., growth_points: 7).
+
+The UI shows the plant visually changing: Seed -> Sprout -> Growing -> Flowered.
+
+Reward: Once it "flowers" (e.g., at 30 points), it moves to your permanent "Garden" (a trophy case).
+
+You are given a new seed of a different variety. This encourages long-term collection.
+
+4. "On This Day" (The Hook)
+The app's home screen will have one primary module: "On This Day."
+
+It checks Firestore for any entries with createdAt timestamps matching today's month/day from previous years.
+
+Example: "One year ago today, you were feeling 😕 and reflected on your job..."
+
+This provides immediate, compounding value and is a massive driver for long-term use.
+
+🔮 V2 & Future Ideas (The Parking Lot)
+This is the stuff we won't build for the MVP, but will keep in mind.
+
+"Ask Future You" Time Capsule: The feature to write a message/question to be opened in 6 months, 1 year, etc.
+
+Graphs & Insights: The "Dashboard" page showing mood graphs over time and correlating moods with journal topics (e.g., "You've mentioned 'Work' on 80% of the days you felt 'Stressed'").
+
+The Social Layer (V-Future): The optional ability to share specific entries or check-ins with a partner or trusted friend. (Your "anti-social media" social feature).

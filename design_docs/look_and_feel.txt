@@ -1,0 +1,25 @@
+🎨 Look & Feel: "Calm & Nurturing"
+This is the visual and verbal identity of "Project Reflect."
+1. Color PaletteYour palette is our guide. It's warm, soft, and sophisticated. We'll use Tailwind's extend feature to create these.
+Primary Background: bg-peach-50 (A very light, warm, almost-white peach).
+Content Backgrounds: bg-white or bg-peach-100 (For cards, text boxes).
+Primary Interactive: bg-purple-600 (The "main" button color, like "Start Reflection"). 
+Dark, rich, but inviting.Secondary Interactive: bg-mauve-400 (For less important buttons 
+or highlights).Accent/Highlight: bg-peach-400 (For icons or active states).
+Text (Standard): text-purple-900 (A very dark, soft purple, not harsh black).
+Text (Muted): text-mauve-700 (For descriptions, sub-headings).Text (Button): text-white 
+or text-peach-100.2. TypographyFont: We'll import a Google Font. "Nunito" is a perfect 
+choice. It's rounded, friendly, and highly legible. It feels modern and gentle, not 
+"threatening" or corporate.Headings (e.g., "Your Daily Reflection"): font-nunito text-2xl
+ font-bold text-purple-900Body Text: font-nunito text-lg text-purple-800 (Note: We'll 
+ use text-lg as the default for an easy-to-read, mobile-first experience).3. Verbiage 
+ (The Voice)This is critical for the "mindful" feel. The app is your gentle guide, not 
+ a drill sergeant.Instead of...We'll use..."New Entry""A new reflection" or "What's on 
+ your mind?""Submit""Save my thought" or "I'm done""Streak""Your garden's growth"
+ "Dashboard""Home" or "Your Garden""Error""A small hiccup. Let's try that again gently."
+ "Prompt""An idea for you..." or "A gentle question..."4. Components (Tailwind)Buttons: 
+ Large, soft, and tactile.class="w-full p-4 rounded-xl text-lg font-bold shadow-md 
+ transition-all duration-200 transform active:scale-95"Text Boxes: Clean and inviting.
+ class="w-full p-4 rounded-xl border-2 border-mauve-200 bg-white focus:border-purple-400 
+ focus:ring-0"Cards: Softly rounded with gentle shadows.class="bg-white rounded-2xl 
+ shadow-sm p-6"

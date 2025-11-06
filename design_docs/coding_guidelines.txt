@@ -1,0 +1,91 @@
+Project Reflect: Coding Standards
+
+This document outlines the core principles and standards for developing "Project Reflect." Our goal is to create a codebase that is clean, maintainable, scalable, and a pleasure to work on.
+
+1. Guiding Philosophy: "Mindful Code"
+
+Just as the app promotes mindfulness, our code should be written with care, intention, and consideration for our future selves. Every file, function, and variable should be clear, purposeful, and easy to understand.
+
+2. Core Principles
+
+DRY (Don't Repeat Yourself)
+
+Rule: If you find yourself writing the same logic in more than one place, stop and refactor.
+
+Action: Abstract the logic into a reusable function, custom hook, or component. Place common, app-wide functions in a /src/utils directory.
+
+SOLID
+
+We adhere to the SOLID principles to keep our React components flexible and maintainable.
+
+S - Single Responsibility Principle (SRP): This is our most important file-level rule.
+
+One Job Per File: Every file (component, hook, utility) should be responsible for one thing.
+
+Component SRP: A component should be responsible for one piece of the UI. If it's handling state, fetching data, and rendering a complex view, it's doing too much.
+
+Action: Break large components down. Use custom hooks (useSomeData.js) to separate data-fetching logic from the component (SomeDataView.jsx) that renders it.
+
+O - Open/Closed Principle: Components should be open for extension but closed for modification.
+
+Action: Use props (especially children) to make components flexible. Instead of adding a new prop for every variation, pass in other components or JSX.
+
+L - Liskov Substitution Principle: Not as direct in React, but the principle of substitutability applies to props.
+
+I - Interface Segregation Principle: Don't force components to accept props they don't use. Keep props objects lean and specific.
+
+D - Dependency Inversion Principle: Components should depend on abstractions, not concrete implementations.
+
+Action: This is why we use custom hooks. A component doesn't care how the hook fetches data (e.g., from Firebase or a mock API); it just cares about the data, loading, and error state it returns.
+
+3. File & Component Structure
+
+File Size Limit
+
+Guideline: Aim to keep files under 500 lines.
+
+Reason: A large file is almost always a file that is doing too much (violating SRP). Large files are hard to read, navigate, and debug.
+
+Action: If your file is approaching this limit, see it as a "code smell" and a natural point to refactor. Can you extract a new component? Can you move logic into a custom hook?
+
+Naming Conventions
+
+Components: PascalCase (e.g., DailyReflection.jsx).
+
+Hooks: camelCase, prefixed with use (e.g., usePlantGrowth.js).
+
+Utilities/Functions: camelCase (e.g., formatDate.js).
+
+Folders: kebab-case (e.g., /src/components/daily-reflection).
+
+4. Code Readability & Maintainability
+
+Comments: Write comments that explain why, not what.
+
+Bad: // Add 1 to count
+
+Good: // We increment the growthPoints here because the user has completed a check-in.
+
+Props: Use descriptive prop names. Use TypeScript or PropTypes (even if just for documentation) to define the shape of props.
+
+Magic Numbers/Strings: Avoid them. Store constants (like collection names, colors, or static text) in a dedicated /src/constants.js file.
+
+Bad: if (plant.stage === 3)
+
+Good: if (plant.stage === PLANT_STAGES.FLOWERED)
+
+5. Reusable Utilities
+
+Purpose: To centralize common, non-React logic (DRY).
+
+Location: src/utils/
+
+Examples:
+
+formatDate.js: Functions for formatting Firestore timestamps into human-readable strings (e.g., "On this day...").
+
+firebase.js: Centralized Firebase app initialization.
+
+calculations.js: Logic for calculating plant growth, etc.
+
+By following these guidelines, we'll build a high-quality application that can easily grow and evolve with our vision.

@@ -1,0 +1,74 @@
+App Structure & Navigation
+This defines the "rooms" of your app and how you move between them. We'll use a Bottom Tab Bar for primary navigation (as you suggested) and a Hamburger/Sidebar for secondary items.
+
+1. Primary Navigation (Bottom Tab Bar)
+This is the fastest way to get to the 3 main "zones" of the app. It's a classic PWA pattern.
+
+[Tab 1] Home (Icon: Sprout)
+
+Purpose: The "Present." What you're doing right now.
+
+Content:
+
+Main Visual: Your plant's progress (e.g., "Day 5: Your sprout is growing!").
+
+Primary CTA: A large button: "Start Daily Reflection" (This kicks off the core loop: triage questions -> meditation guide -> post-reflection).
+
+Secondary CTA: A smaller button or link: "Log a Quick Thought" (Opens a simple modal: "What's on your mind?" + text box).
+
+"On This Day" Module: A card showing your entry from 1, 2, or X years ago.
+
+"Today's Question" Module: A small card with a single, simple prompt ("What made you smile today?").
+
+[Tab 2] Journal (Icon: Book)
+
+Purpose: The "Past." Reviewing all your old entries.
+
+Content:
+
+Controls: A search bar and a calendar icon (to jump to a specific date).
+
+View: A reverse-chronological list of your entries, grouped by day.
+
+Entry Card: Shows the date, the primary mood (emoji), and a snippet of the text. Tapping it opens the full entry, including any photos you uploaded.
+
+[Tab 3] Future (Icon: Time Capsule/Sealed Letter)
+
+Purpose: The "Future." Planning and anticipating.
+
+Content (This is V2, but we'll build the space for it):
+
+"Time Capsule" Feature:
+
+Button: "Ask Future You a Question."
+
+A list of your "Sealed Messages" (e.g., "Opens in 6 months").
+
+A list of "Delivered Messages" you can re-read.
+
+"Scheduled Reflections" Feature:
+
+"Schedule a check-in about 'My Job' every Friday."
+
+2. Secondary Navigation (Header + Hamburger Menu)
+Header:
+
+Left: Hamburger Menu Icon (to open the sidebar).
+
+Center: "Project Reflect" (or the name of the current tab).
+
+Sidebar (Opens from Hamburger):
+
+"Your Full Garden": A link to a "trophy case" page showing all your fully-grown, flowered plants.
+
+"Profile": Your name, email, etc.
+
+"Settings":
+
+Notification preferences (timing for quick check-ins, daily reflection).
+
+Data Export ("Download all my entries").
+
+Account (Change password, Delete account).
+
+"Logout"
