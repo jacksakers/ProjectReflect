@@ -10,6 +10,8 @@
  */
 
 function HomePage() {
+  console.log('HomePage is rendering');
+  
   return (
     <div className="space-y-6">
       {/* Plant Progress Section */}

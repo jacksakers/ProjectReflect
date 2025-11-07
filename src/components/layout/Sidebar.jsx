@@ -8,6 +8,8 @@
  * - Logout
  */
 
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { 
   XMarkIcon, 
   SparklesIcon, 
@@ -17,6 +19,19 @@ import {
 } from '@heroicons/react/24/outline';
 
 function Sidebar({ isOpen, onClose }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+      onClose();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const menuItems = [
     { icon: SparklesIcon, label: 'Your Full Garden', onClick: () => {} },
     { icon: UserCircleIcon, label: 'Profile', onClick: () => {} },
@@ -79,7 +94,7 @@ function Sidebar({ isOpen, onClose }) {
           {/* Logout Button */}
           <div className="p-4 border-t border-peach-200">
             <button
-              onClick={onClose}
+              onClick={handleLogout}
               className="w-full flex items-center gap-4 p-4 text-mauve-700 hover:bg-peach-50 rounded-xl transition-colors"
             >
               <ArrowRightOnRectangleIcon className="h-6 w-6" />

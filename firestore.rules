@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - users can read and write their own document
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // Garden subcollection - users can read and write their own garden
+      match /garden/{plantId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Entries collection - users can only read and write their own entries
+    match /entries/{entryId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.authorUid;
+      allow create: if request.auth != null 
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0;
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.authorUid;
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorUid;
+    }
+    
+    // Time Capsules collection - users can only read and write their own capsules
+    match /timeCapsules/{capsuleId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.authorUid;
+      allow create: if request.auth != null 
+        && request.resource.data.authorUid == request.auth.uid;
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.authorUid;
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorUid;
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

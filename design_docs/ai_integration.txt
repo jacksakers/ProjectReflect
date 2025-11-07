@@ -1,0 +1,111 @@
+Project Reflect: AI Integration Design (V1)
+
+This document outlines the strategy for integrating a generative AI (Gemini) into Project Reflect. The goal is to enhance the user's mindfulness practice through gentle, AI-powered insights and suggestions, without compromising privacy or the app's core "calm" philosophy.
+
+1. Guiding Philosophy: The "Gentle Assistant"
+
+The AI is not a "feature" the user talks to. It is a silent, background assistant whose only job is to provide gentle nudges and reflections.
+
+Privacy First: All AI interactions will be handled server-to-server. No user data will be used for AI model training.
+
+No Diagnosis: The AI must not provide medical advice, diagnose conditions, or use alarming language. Its role is to ask open-ended questions and identify simple patterns, acting as a curious and kind observer.
+
+Asynchronous & Resilient: The core app must function perfectly if the AI fails. AI-generated content is a "bonus," not a dependency. All calls will run in the background with robust error handling.
+
+2. Technical Architecture: Firebase Cloud Functions
+
+We will not call the Gemini API directly from the React app. This would expose your API key. We will use Firebase Cloud Functions to act as a secure intermediary.
+
+Standard Flow (for background tasks):
+
+React App: The user saves a new journal entry. This is a simple write to the entries collection in Firestore.
+
+Firebase Function (Trigger): A Cloud Function is automatically triggered by this onWrite event.
+
+Function (Server-side): The function (running securely on Google's servers) takes the new entry's text.
+
+Gemini API Call: The function makes a POST request to the Gemini API, using the API key stored securely in its environment variables.
+
+Gemini Response: Gemini returns a structured JSON response (e.g., a suggested question).
+
+Firestore (Write-back): The function takes this response and gently writes it to a different document, such as the users/{uid} document (e.g., updating a field called ai_suggested_question).
+
+React App (Listen): The app, which has an onSnapshot listener on the users document, sees the new question appear and displays it on the Home screen.
+
+3. Core AI Features & Prompts
+
+Here is how we will implement the features you described.
+
+Feature 1: AI-Generated Insights (Weekly)
+
+Goal: To provide the "graphs and insights" you mentioned, identifying simple patterns in the user's recent check-ins.
+
+Trigger: A scheduled Firebase Function that runs once per week for each user.
+
+Process:
+
+The function queries the user's last 7-10 entries.
+
+It creates a simple JSON array of their moods and key topics.
+
+It sends this array to Gemini with a carefully crafted system prompt:
+
+"You are a mindful analytics assistant. You never diagnose or give advice. You only find gentle patterns. Based on the following JSON of moods and topics, identify one simple, non-judgmental pattern. Start your reply with 'I've noticed that...'."
+
+Output: A simple string like "I've noticed that 'walks' have often appeared on days you've felt 'calm'."
+
+Storage: This string is saved to users/{uid} in a field called ai_weekly_insight.
+
+Feature 2: Dynamic Question Generation (Daily)
+
+Goal: To generate specific, relevant questions based on a user's latest entry, replacing the static "Today's Question."
+
+Trigger: An onWrite Firebase Function, triggered every time a new entry is created.
+
+Process:
+
+The function reads the text of the newly created entry.
+
+It sends this text to Gemini with a system prompt:
+
+"You are a gentle, curious journal assistant. You never give advice or diagnose. You only ask one insightful, open-ended follow-up question based on the user's entry. Keep the question under 15 words and phrase it with 'I wonder...' or 'What if...'. Do not be alarming."
+
+User Entry: "Today I felt overwhelmed by my presentation. My shoulders were so tense during the body scan."
+
+Output: A string like "I wonder what one small moment of calm felt like today?"
+
+Storage: This string is saved to users/{uid} as ai_next_question.
+
+Feature 3: Dynamic Meditation Generation (On-Demand)
+
+Goal: To generate text-based meditation instructions based on the user's "triage" answers.
+
+Trigger: This is the one exception to the "background" rule. We will use a Callable Firebase Function. The user will wait 1-2 seconds for a response.
+
+Process:
+
+React App: User answers triage questions (e.g., "Feeling: Tense Shoulders," "Thought: Busy Mind").
+
+The app calls the getMeditation function with these inputs.
+
+The Cloud Function calls Gemini with a system prompt:
+
+"You are a meditation guide. A user is feeling 'Tense Shoulders' and has a 'Busy Mind'. Generate a simple, 3-step, text-only breathing or stretching meditation (under 100 words) to help. Start each step with a number (e.g., '1.')."
+
+Output: A text string with the meditation steps, which is sent directly back to the React app.
+
+4. Error Handling
+
+This is critical. If the Gemini API is down, slow, or returns a bad response, the user must not be affected.
+
+All API calls within the Firebase Functions will be wrapped in try...catch blocks.
+
+If a call fails (e.g., a 500 error from Gemini or a malformed response):
+
+The function will log the error to the Firebase Cloud Logging console (for you to debug).
+
+It will fail silently.
+
+It will not write anything to Firestore.
+
+Result: The user simply won't get a new AI question or insight that day. The app will continue to work perfectly, falling back to its default state (e.g., showing a static "Today's Question" or a default meditation).
