@@ -11,9 +11,11 @@
 
 import { useState } from 'react';
 import ReflectionFlow from '../components/reflection/ReflectionFlow';
+import QuickThought from '../components/QuickThought';
 
 function HomePage() {
   const [showReflectionFlow, setShowReflectionFlow] = useState(false);
+  const [showQuickThought, setShowQuickThought] = useState(false);
   
   const handleReflectionComplete = (reflectionData) => {
     console.log('Reflection completed:', reflectionData);
@@ -57,11 +59,20 @@ function HomePage() {
       </button>
 
       {/* Secondary CTA */}
-      <button className="w-full p-4 bg-purple-400 text-white rounded-xl text-lg 
-        font-bold shadow-md transition-all duration-200 transform active:scale-95 
-        hover:bg-purple-500">
+      <button 
+        onClick={() => setShowQuickThought(true)}
+        className="w-full p-4 bg-purple-400 text-white rounded-xl text-lg 
+          font-bold shadow-md transition-all duration-200 transform active:scale-95 
+          hover:bg-purple-500"
+      >
         Log a Quick Thought
       </button>
+
+      {/* Quick Thought Modal */}
+      <QuickThought 
+        isOpen={showQuickThought} 
+        onClose={() => setShowQuickThought(false)} 
+      />
 
       {/* On This Day Module */}
       <div className="bg-white rounded-2xl shadow-sm p-6">
