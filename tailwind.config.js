@@ -7,14 +7,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        peach: {
+        orange: {
           50: '#FFF5F2',
           100: '#FFE8E0',
           200: '#FFD1C1',
           300: '#FFBA9F',
           400: '#FFA07A',
         },
-        mauve: {
+        purple: {
           200: '#E8DFF5',
           400: '#B8A1D3',
           700: '#7C6B8F',

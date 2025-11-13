@@ -10,11 +10,11 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 
 function Header({ title, onMenuClick }) {
   return (
-    <header className="bg-white border-b border-peach-200 sticky top-0 z-10">
+    <header className="bg-white border-b border-orange-200 sticky top-0 z-100">
       <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
         <button
           onClick={onMenuClick}
-          className="p-2 text-purple-900 hover:bg-peach-50 rounded-lg transition-colors"
+          className="p-2 text-purple-900 hover:bg-orange-50 rounded-lg transition-colors"
           aria-label="Open menu"
         >
           <Bars3Icon className="h-6 w-6" />

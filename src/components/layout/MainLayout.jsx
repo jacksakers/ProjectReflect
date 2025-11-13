@@ -33,7 +33,7 @@ function MainLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-peach-50">
+    <div className="min-h-screen bg-orange-50">
       <Header title={getPageTitle()} onMenuClick={() => setIsSidebarOpen(true)} />
       
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />

@@ -43,26 +43,26 @@ function Sidebar({ isOpen, onClose }) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+          className="fixed inset-0 bg-black opacity-60 z-150 transition-opacity"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-80 bg-white z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-80 bg-white z-250 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-peach-200">
+          <div className="flex items-center justify-between p-6 border-b border-orange-200">
             <h2 className="font-nunito text-2xl font-bold text-purple-900">
               Project Reflect
             </h2>
             <button
               onClick={onClose}
-              className="p-2 text-purple-900 hover:bg-peach-50 rounded-lg transition-colors"
+              className="p-2 text-purple-900 hover:bg-orange-50 rounded-lg transition-colors"
               aria-label="Close menu"
             >
               <XMarkIcon className="h-6 w-6" />
@@ -79,7 +79,7 @@ function Sidebar({ isOpen, onClose }) {
                       item.onClick();
                       onClose();
                     }}
-                    className="w-full flex items-center gap-4 p-4 text-purple-900 hover:bg-peach-50 rounded-xl transition-colors"
+                    className="w-full flex items-center gap-4 p-4 text-purple-900 hover:bg-orange-50 rounded-xl transition-colors"
                   >
                     <item.icon className="h-6 w-6" />
                     <span className="font-nunito text-lg font-semibold">
@@ -92,10 +92,10 @@ function Sidebar({ isOpen, onClose }) {
           </nav>
 
           {/* Logout Button */}
-          <div className="p-4 border-t border-peach-200">
+          <div className="p-4 border-t border-orange-200">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-4 p-4 text-mauve-700 hover:bg-peach-50 rounded-xl transition-colors"
+              className="w-full flex items-center gap-4 p-4 text-purple-700 hover:bg-orange-50 rounded-xl transition-colors"
             >
               <ArrowRightOnRectangleIcon className="h-6 w-6" />
               <span className="font-nunito text-lg font-semibold">Logout</span>

@@ -51,7 +51,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-peach-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-orange-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center">
@@ -59,7 +59,7 @@ function LoginPage() {
           <h1 className="font-nunito text-3xl font-bold text-purple-900 mb-2">
             Welcome back
           </h1>
-          <p className="font-nunito text-lg text-mauve-700">
+          <p className="font-nunito text-lg text-purple-700">
             Continue your journey of reflection
           </p>
         </div>
@@ -68,7 +68,7 @@ function LoginPage() {
         <div className="bg-white rounded-2xl shadow-sm p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-peach-100 border-2 border-peach-400 rounded-xl p-4">
+              <div className="bg-orange-100 border-2 border-orange-400 rounded-xl p-4">
                 <p className="font-nunito text-purple-900">{error}</p>
               </div>
             )}
@@ -82,7 +82,7 @@ function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 rounded-xl border-2 border-mauve-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
+                className="w-full p-4 rounded-xl border-2 border-purple-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
                 placeholder="your.email@example.com"
                 disabled={isLoading}
               />
@@ -97,7 +97,7 @@ function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 rounded-xl border-2 border-mauve-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
+                className="w-full p-4 rounded-xl border-2 border-purple-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
                 placeholder="••••••••"
                 disabled={isLoading}
               />
@@ -115,7 +115,7 @@ function LoginPage() {
 
         {/* Sign Up Link */}
         <div className="text-center">
-          <p className="font-nunito text-mauve-700">
+          <p className="font-nunito text-purple-700">
             New to Project Reflect?{' '}
             <Link to="/signup" className="text-purple-600 font-bold hover:text-purple-700 transition-colors">
               Create an account

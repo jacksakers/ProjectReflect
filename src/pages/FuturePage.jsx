@@ -17,7 +17,7 @@ function FuturePage() {
           <h2 className="font-nunito text-xl font-bold text-purple-900 mb-2">
             Messages to Your Future Self
           </h2>
-          <p className="font-nunito text-lg text-mauve-700">
+          <p className="font-nunito text-lg text-purple-700">
             Ask a question or share a thought with the you of tomorrow.
           </p>
         </div>
@@ -32,7 +32,7 @@ function FuturePage() {
         <h3 className="font-nunito text-lg font-bold text-purple-900 mb-4">
           Sealed Messages
         </h3>
-        <p className="font-nunito text-mauve-700 italic text-center py-4">
+        <p className="font-nunito text-purple-700 italic text-center py-4">
           No messages waiting to be opened.
         </p>
       </div>
@@ -42,7 +42,7 @@ function FuturePage() {
         <h3 className="font-nunito text-lg font-bold text-purple-900 mb-4">
           Delivered Messages
         </h3>
-        <p className="font-nunito text-mauve-700 italic text-center py-4">
+        <p className="font-nunito text-purple-700 italic text-center py-4">
           Messages from your past self will appear here.
         </p>
       </div>

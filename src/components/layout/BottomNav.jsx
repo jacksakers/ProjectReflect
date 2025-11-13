@@ -34,7 +34,7 @@ function BottomNav() {
   ];
 
   return (
-    <nav className="bg-white border-t border-peach-200 fixed bottom-0 left-0 right-0 z-10">
+    <nav className="bg-white border-t border-orange-200 fixed bottom-0 left-0 right-0 z-100">
       <div className="max-w-2xl mx-auto px-4">
         <div className="flex justify-around">
           {navItems.map((item) => (
@@ -45,7 +45,7 @@ function BottomNav() {
                 `flex flex-col items-center py-3 px-6 transition-colors ${
                   isActive
                     ? 'text-purple-600'
-                    : 'text-mauve-700 hover:text-purple-600'
+                    : 'text-purple-700 hover:text-purple-600'
                 }`
               }
             >

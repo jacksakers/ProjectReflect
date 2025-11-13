@@ -9,11 +9,29 @@
  * - Today's Question module
  */
 
+import { useState } from 'react';
+import ReflectionFlow from '../components/reflection/ReflectionFlow';
+
 function HomePage() {
-  console.log('HomePage is rendering');
+  const [showReflectionFlow, setShowReflectionFlow] = useState(false);
+  
+  const handleReflectionComplete = (reflectionData) => {
+    console.log('Reflection completed:', reflectionData);
+    setShowReflectionFlow(false);
+    // Could add a success toast or update plant progress here
+  };
+
+  if (showReflectionFlow) {
+    return (
+      <ReflectionFlow 
+        onComplete={handleReflectionComplete}
+        onClose={() => setShowReflectionFlow(false)}
+      />
+    );
+  }
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Plant Progress Section */}
       <div className="bg-white rounded-2xl shadow-sm p-6">
         <div className="text-center">
@@ -21,20 +39,27 @@ function HomePage() {
           <h2 className="font-nunito text-xl font-bold text-purple-900 mb-2">
             Day 5: Your sprout is growing!
           </h2>
-          <div className="w-full bg-peach-100 rounded-full h-3 mb-2">
+          <div className="w-full bg-orange-100 rounded-full h-3 mb-2">
             <div className="bg-purple-600 h-3 rounded-full" style={{ width: '35%' }}></div>
           </div>
-          <p className="font-nunito text-sm text-mauve-700">7 check-ins • 23 to flower</p>
+          <p className="font-nunito text-sm text-purple-700">7 check-ins • 23 to flower</p>
         </div>
       </div>
 
       {/* Primary CTA */}
-      <button className="w-full p-4 bg-purple-600 text-white rounded-xl text-lg font-bold shadow-md transition-all duration-200 transform active:scale-95 hover:bg-purple-700">
-        Start Daily Reflection
+      <button 
+        onClick={() => setShowReflectionFlow(true)}
+        className="w-full p-4 bg-purple-600 text-white rounded-xl text-lg 
+          font-bold shadow-md transition-all duration-200 transform active:scale-95 
+          hover:bg-purple-700"
+      >
+        Start a Reflection
       </button>
 
       {/* Secondary CTA */}
-      <button className="w-full p-4 bg-mauve-400 text-white rounded-xl text-lg font-bold shadow-md transition-all duration-200 transform active:scale-95 hover:bg-mauve-500">
+      <button className="w-full p-4 bg-purple-400 text-white rounded-xl text-lg 
+        font-bold shadow-md transition-all duration-200 transform active:scale-95 
+        hover:bg-purple-500">
         Log a Quick Thought
       </button>
 
@@ -43,13 +68,13 @@ function HomePage() {
         <h3 className="font-nunito text-lg font-bold text-purple-900 mb-3">
           On This Day
         </h3>
-        <p className="font-nunito text-mauve-700 italic">
+        <p className="font-nunito text-purple-700 italic">
           No entries from previous years on this day... yet.
         </p>
       </div>
 
       {/* Today's Question Module */}
-      <div className="bg-peach-100 rounded-2xl shadow-sm p-6">
+      <div className="bg-orange-100 rounded-2xl shadow-sm p-6">
         <h3 className="font-nunito text-sm font-bold text-purple-900 mb-2">
           An idea for you...
         </h3>

@@ -16,7 +16,7 @@ function JournalPage() {
           <input
             type="text"
             placeholder="Search your reflections..."
-            className="flex-1 p-3 rounded-xl border-2 border-mauve-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
+            className="flex-1 p-3 rounded-xl border-2 border-purple-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito"
           />
           <button className="p-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
             📅
@@ -32,7 +32,7 @@ function JournalPage() {
           <h3 className="font-nunito text-xl font-bold text-purple-900 mb-2">
             Your journal awaits
           </h3>
-          <p className="font-nunito text-lg text-mauve-700">
+          <p className="font-nunito text-lg text-purple-700">
             Start your first reflection to begin your journey.
           </p>
         </div>
