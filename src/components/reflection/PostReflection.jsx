@@ -37,7 +37,7 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
     try {
       const now = new Date();
       
-      // Create the entry document (following database.txt structure)
+      // Create the entry document (following Firebase flat structure)
       const entryData = {
         authorUid: currentUser.uid,
         text: reflectionText.trim(),
@@ -48,15 +48,15 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
         createdDay: now.getDate(),
         entryType: 'daily_reflection',
         
-        // Meditation context
+        // Meditation context (flat structure)
         meditationType: meditation.id,
         meditationName: meditation.name,
         meditationDuration: meditation.duration,
         
-        // Triage context
-        thoughtCategory: triageAnswers.thoughtCategory,
+        // Triage context (flat structure)
+        thoughtCategory: triageAnswers.thought,
         thoughtContent: triageAnswers.thought,
-        bodyLocation: triageAnswers.bodyLocation,
+        bodyLocation: triageAnswers.body,
         
         // Optional fields for future use
         photoUrl: null,

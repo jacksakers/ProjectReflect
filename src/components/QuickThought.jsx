@@ -47,6 +47,8 @@ function QuickThought({ isOpen, onClose }) {
 
     setIsSaving(true);
     try {
+      const now = new Date();
+      
       // Save to entries collection with quickThought flag
       await addDoc(collection(db, 'entries'), {
         authorUid: currentUser.uid,
@@ -54,8 +56,13 @@ function QuickThought({ isOpen, onClose }) {
         mood: selectedMood || null,
         category: selectedCategory || null,
         quickThought: true, // Flag to distinguish from full reflections
-        timestamp: serverTimestamp(),
-        createdAt: new Date().toISOString(),
+        createdAt: serverTimestamp(),
+        createdDate: now.toISOString().split('T')[0], // YYYY-MM-DD for queries
+        createdMonth: now.getMonth() + 1,
+        createdDay: now.getDate(),
+        entryType: 'quick_thought',
+        photoUrl: null,
+        tags: []
       });
 
       // Reset and close
@@ -100,7 +107,7 @@ function QuickThought({ isOpen, onClose }) {
 
         {/* Content */}
         <div className="p-6 space-y-4">
-            
+
           {/* Text Input */}
           <div>
             <label className="font-nunito text-sm font-semibold text-purple-900 mb-2 block">
