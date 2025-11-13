@@ -54,9 +54,9 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
         meditationDuration: meditation.duration,
         
         // Triage context (flat structure)
-        thoughtCategory: triageAnswers.thought,
+        thoughtCategory: triageAnswers.thoughtCategory,
         thoughtContent: triageAnswers.thought,
-        bodyLocation: triageAnswers.body,
+        bodyLocation: triageAnswers.bodyLocation,
         
         // Optional fields for future use
         photoUrl: null,

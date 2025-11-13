@@ -43,19 +43,7 @@ export function useJournalEntries() {
           const entriesData = [];
           querySnapshot.forEach((doc) => {
             const data = doc.data();
-            let createdAtDate = null;
-            
-            // Handle different date formats (Firestore Timestamp or ISO string)
-            if (data.createdAt) {
-              if (typeof data.createdAt.toDate === 'function') {
-                // Firestore Timestamp
-                createdAtDate = data.createdAt.toDate();
-              } else if (typeof data.createdAt === 'string') {
-                // ISO string
-                createdAtDate = new Date(data.createdAt);
-              }
-            }
-            
+            let createdAtDate = data.createdAt.toDate();
             entriesData.push({
               id: doc.id,
               ...data,

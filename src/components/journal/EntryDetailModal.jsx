@@ -131,7 +131,8 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div 
-          className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-slide-up"
+          className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[70vh] 
+                    overflow-y-auto pointer-events-auto animate-slide-up"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
