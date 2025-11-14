@@ -139,17 +139,6 @@ function CalendarView({ entries, selectedDate, onDateSelect }) {
         {days}
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 pt-4 border-t border-purple-100 flex items-center justify-center gap-4 text-xs font-nunito">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-purple-600" />
-          <span className="text-purple-700">Has entry</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-lg ring-2 ring-purple-400" />
-          <span className="text-purple-700">Today</span>
-        </div>
-      </div>
     </div>
   );
 }

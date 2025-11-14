@@ -20,6 +20,7 @@ function MeditationGuide({ meditation, onComplete }) {
   });
   
   const audioRef = useRef(null);
+  const endBellRef = useRef(null);
 
   // Meditation scripts based on type
   const meditationScripts = {
@@ -249,6 +250,17 @@ function MeditationGuide({ meditation, onComplete }) {
     }
   }, [timeElapsed, currentPhase, totalPhases, currentStep.duration, isPaused]);
 
+  // Play end bell when meditation completes
+  useEffect(() => {
+    if (currentPhase === totalPhases - 1 && timeElapsed >= currentStep.duration) {
+      if (!isMuted && endBellRef.current) {
+        endBellRef.current.play().catch(err => {
+          console.log('End bell playback failed:', err);
+        });
+      }
+    }
+  }, [currentPhase, totalPhases, timeElapsed, currentStep.duration, isMuted]);
+
   const progress = ((currentPhase + 1) / totalPhases) * 100;
   const isComplete = currentPhase === totalPhases - 1;
 
@@ -266,8 +278,9 @@ function MeditationGuide({ meditation, onComplete }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col justify-between">
-      {/* Hidden audio element */}
+      {/* Hidden audio elements */}
       <audio ref={audioRef} src="/meditation-bell.mp3" preload="auto" />
+      <audio ref={endBellRef} src="/end-bell.mp3" preload="auto" />
       
       {/* Top Section - Progress */}
       <div>
