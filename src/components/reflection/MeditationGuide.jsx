@@ -228,7 +228,18 @@ function MeditationGuide({ meditation, onComplete }) {
   useEffect(() => {
     localStorage.setItem('meditationBellMuted', isMuted.toString());
   }, [isMuted]);
-
+  
+  // Play end bell when meditation completes
+  useEffect(() => {
+    if (currentPhase === totalPhases - 1 && timeElapsed >= currentStep.duration) {
+      if (!isMuted && endBellRef.current) {
+        endBellRef.current.play().catch(err => {
+          console.log('End bell playback failed:', err);
+        });
+      }
+    }
+  }, [currentPhase, totalPhases, timeElapsed, currentStep.duration, isMuted]);
+  
   // Timer effect
   useEffect(() => {
     if (isPaused) return;
@@ -250,16 +261,6 @@ function MeditationGuide({ meditation, onComplete }) {
     }
   }, [timeElapsed, currentPhase, totalPhases, currentStep.duration, isPaused]);
 
-  // Play end bell when meditation completes
-  useEffect(() => {
-    if (currentPhase === totalPhases - 1 && timeElapsed >= currentStep.duration) {
-      if (!isMuted && endBellRef.current) {
-        endBellRef.current.play().catch(err => {
-          console.log('End bell playback failed:', err);
-        });
-      }
-    }
-  }, [currentPhase, totalPhases, timeElapsed, currentStep.duration, isMuted]);
 
   const progress = ((currentPhase + 1) / totalPhases) * 100;
   const isComplete = currentPhase === totalPhases - 1;

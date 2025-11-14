@@ -92,7 +92,8 @@ function QuickThought({ isOpen, onClose }) {
       {/* Modal */}
       <div className="bg-white rounded-3xl w-full sm:max-w-lg max-h-full overflow-y-auto shadow-2xl animate-slide-up mx-4">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-orange-200 px-6 py-4 flex items-center justify-between rounded-t-3xl">
+        <div className="sticky top-0 bg-white border-b border-orange-200 px-6 
+            py-4 flex items-center justify-between rounded-t-3xl z-15">
           <h2 className="font-nunito text-xl font-bold text-purple-900">
             Quick Thought
           </h2>
