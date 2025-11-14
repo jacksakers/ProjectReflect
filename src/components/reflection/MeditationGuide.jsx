@@ -3,14 +3,23 @@
  * 
  * Displays meditation text with proper pacing.
  * Shows progress and allows user to complete when ready.
+ * Plays a bell sound when new instructions appear (can be muted).
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline';
 
 function MeditationGuide({ meditation, onComplete }) {
   const [currentPhase, setCurrentPhase] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => {
+    // Load mute preference from localStorage
+    const saved = localStorage.getItem('meditationBellMuted');
+    return saved === 'true';
+  });
+  
+  const audioRef = useRef(null);
 
   // Meditation scripts based on type
   const meditationScripts = {
@@ -205,6 +214,20 @@ function MeditationGuide({ meditation, onComplete }) {
   const totalPhases = script.length;
   const currentStep = script[currentPhase];
 
+  // Play bell sound when phase changes
+  useEffect(() => {
+    if (!isMuted && audioRef.current) {
+      audioRef.current.play().catch(err => {
+        console.log('Audio playback failed:', err);
+      });
+    }
+  }, [currentPhase, isMuted]);
+
+  // Save mute preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('meditationBellMuted', isMuted.toString());
+  }, [isMuted]);
+
   // Timer effect
   useEffect(() => {
     if (isPaused) return;
@@ -237,8 +260,15 @@ function MeditationGuide({ meditation, onComplete }) {
 
   const totalDuration = script.reduce((sum, phase) => sum + phase.duration, 0);
 
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col justify-between">
+      {/* Hidden audio element */}
+      <audio ref={audioRef} src="/meditation-bell.mp3" preload="auto" />
+      
       {/* Top Section - Progress */}
       <div>
         <div className="mb-8">
@@ -246,9 +276,23 @@ function MeditationGuide({ meditation, onComplete }) {
             <span className="font-nunito text-sm text-purple-700">
               {meditation.name}
             </span>
-            <span className="font-nunito text-sm text-purple-700">
-              {formatTime(timeElapsed + (currentPhase * 40))} / {formatTime(totalDuration)}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-nunito text-sm text-purple-700">
+                {formatTime(timeElapsed + (currentPhase * 40))} / {formatTime(totalDuration)}
+              </span>
+              {/* Mute button */}
+              <button
+                onClick={toggleMute}
+                className="p-2 rounded-lg hover:bg-orange-200 transition-colors"
+                aria-label={isMuted ? 'Unmute bell' : 'Mute bell'}
+              >
+                {isMuted ? (
+                  <SpeakerXMarkIcon className="w-5 h-5 text-purple-700" />
+                ) : (
+                  <SpeakerWaveIcon className="w-5 h-5 text-purple-700" />
+                )}
+              </button>
+            </div>
           </div>
           <div className="w-full bg-orange-100 rounded-full h-2">
             <div 

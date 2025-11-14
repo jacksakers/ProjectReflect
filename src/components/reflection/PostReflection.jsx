@@ -12,7 +12,7 @@ import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from '
 
 function PostReflection({ triageAnswers, meditation, onComplete }) {
   const [reflectionText, setReflectionText] = useState('');
-  const [mood, setMood] = useState('');
+  const [selectedMoods, setSelectedMoods] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const { currentUser } = useAuth();
@@ -25,9 +25,61 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
     { id: 'grateful', emoji: '🙏', label: 'Grateful' }
   ];
 
+  const toggleMood = (moodId) => {
+    setSelectedMoods(prev => {
+      if (prev.includes(moodId)) {
+        return prev.filter(id => id !== moodId);
+      } else {
+        return [...prev, moodId];
+      }
+    });
+  };
+
+  // Helper to format thought categories for display
+  const getThoughtLabels = () => {
+    const thoughtMap = {
+      'work': { label: 'Work', emoji: '💼' },
+      'relationship': { label: 'Relationship', emoji: '💕' },
+      'self': { label: 'Self', emoji: '🪞' },
+      'family': { label: 'Family', emoji: '👨‍👩‍👧‍👦' },
+      'health': { label: 'Health', emoji: '🏥' },
+      'future': { label: 'Future', emoji: '🔮' },
+      'other': { label: 'Other', emoji: '💭' }
+    };
+
+    const thoughts = Array.isArray(triageAnswers.thoughts) 
+      ? triageAnswers.thoughts 
+      : [triageAnswers.thoughts];
+
+    return thoughts
+      .filter(t => t && thoughtMap[t])
+      .map(t => `${thoughtMap[t].emoji} ${thoughtMap[t].label}`);
+  };
+
+  // Helper to format body locations for display
+  const getBodyLocationLabels = () => {
+    const locationMap = {
+      'tense_shoulders': { label: 'Tense Shoulders', emoji: '😣' },
+      'jittery_stomach': { label: 'Jittery Stomach', emoji: '🦋' },
+      'tight_chest': { label: 'Tight Chest', emoji: '😮‍💨' },
+      'racing_heart': { label: 'Racing Heart', emoji: '💓' },
+      'heavy_head': { label: 'Heavy Head', emoji: '🤯' },
+      'calm_body': { label: 'Calm & Centered', emoji: '😌' },
+      'tired_everywhere': { label: 'Tired Everywhere', emoji: '😴' }
+    };
+
+    const locations = Array.isArray(triageAnswers.bodyLocations) 
+      ? triageAnswers.bodyLocations 
+      : [triageAnswers.bodyLocations];
+
+    return locations
+      .filter(l => l && locationMap[l])
+      .map(l => `${locationMap[l].emoji} ${locationMap[l].label}`);
+  };
+
   const handleSave = async () => {
-    if (!reflectionText.trim() || !mood) {
-      setError('Please share a thought and choose how you feel.');
+    if (!reflectionText.trim() || selectedMoods.length === 0) {
+      setError('Please share a thought and choose at least one feeling.');
       return;
     }
 
@@ -41,7 +93,8 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
       const entryData = {
         authorUid: currentUser.uid,
         text: reflectionText.trim(),
-        mood: mood,
+        mood: selectedMoods[0], // Primary mood for backward compatibility
+        moods: selectedMoods, // All selected moods
         createdAt: serverTimestamp(),
         createdDate: now.toISOString().split('T')[0], // YYYY-MM-DD
         createdMonth: now.getMonth() + 1,
@@ -53,10 +106,10 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
         meditationName: meditation.name,
         meditationDuration: meditation.duration,
         
-        // Triage context (flat structure)
-        thoughtCategory: triageAnswers.thoughtCategory,
-        thoughtContent: triageAnswers.thought,
-        bodyLocation: triageAnswers.bodyLocation,
+        // Triage context (updated to support arrays)
+        thoughtCategories: triageAnswers.thoughtCategories || [],
+        thoughts: triageAnswers.thoughts || [],
+        bodyLocations: triageAnswers.bodyLocations || [],
         
         // Optional fields for future use
         photoUrl: null,
@@ -78,7 +131,8 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
       // Call completion handler
       onComplete({
         entry: entryData,
-        mood: mood
+        mood: selectedMoods[0],
+        moods: selectedMoods
       });
 
     } catch (err) {
@@ -103,15 +157,15 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
       {/* Mood Selection */}
       <div className="mb-6">
         <h2 className="font-nunito text-lg font-bold text-purple-900 mb-3">
-          Right now, I feel...
+          Right now, I feel... <span className="text-sm font-normal text-purple-600">(select all that apply)</span>
         </h2>
         <div className="grid grid-cols-3 gap-3">
           {moods.map((moodOption) => (
             <button
               key={moodOption.id}
-              onClick={() => setMood(moodOption.id)}
+              onClick={() => toggleMood(moodOption.id)}
               className={`p-4 rounded-xl border-2 transition-all duration-200 ${
-                mood === moodOption.id
+                selectedMoods.includes(moodOption.id)
                   ? 'border-purple-600 bg-purple-50 shadow-md'
                   : 'border-purple-200 bg-white hover:border-purple-400'
               }`}
@@ -122,6 +176,55 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
               </div>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Context Summary - What you were feeling before */}
+      <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-5 mb-6">
+        <h3 className="font-nunito text-sm font-bold text-purple-900 mb-3 uppercase tracking-wide">
+          Before you meditated
+        </h3>
+        
+        <div className="space-y-3">
+          <div>
+            <p className="font-nunito text-xs font-semibold text-purple-700 mb-1">
+              What was weighing on you:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {getThoughtLabels().map((label, idx) => (
+                <span key={idx} className="font-nunito text-sm bg-white px-3 py-1 rounded-full text-purple-800 border border-purple-200">
+                  {label}
+                </span>
+              ))}
+              {triageAnswers.customThought && (
+                <span className="font-nunito text-sm bg-white px-3 py-1 rounded-full text-purple-800 border border-purple-200 italic">
+                  "{triageAnswers.customThought}"
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <p className="font-nunito text-xs font-semibold text-purple-700 mb-1">
+              Where you felt it in your body:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {getBodyLocationLabels().map((label, idx) => (
+                <span key={idx} className="font-nunito text-sm bg-white px-3 py-1 rounded-full text-purple-800 border border-purple-200">
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-purple-200">
+            <p className="font-nunito text-xs font-semibold text-purple-700 mb-1">
+              You chose to practice:
+            </p>
+            <span className="font-nunito text-sm bg-purple-600 text-white px-3 py-1 rounded-full inline-block">
+              {meditation.emoji} {meditation.name} ({meditation.duration} min)
+            </span>
+          </div>
         </div>
       </div>
 
@@ -149,21 +252,12 @@ function PostReflection({ triageAnswers, meditation, onComplete }) {
         </div>
       )}
 
-      {/* Context Summary */}
-      <div className="bg-orange-100 rounded-xl p-4 mb-6">
-        <p className="font-nunito text-sm text-purple-800">
-          <strong>You reflected on:</strong> {triageAnswers.thought}
-          <br />
-          <strong>Meditation:</strong> {meditation.name} ({meditation.duration} min)
-        </p>
-      </div>
-
       {/* Save Button */}
       <button
         onClick={handleSave}
-        disabled={isSaving || !reflectionText.trim() || !mood}
+        disabled={isSaving || !reflectionText.trim() || selectedMoods.length === 0}
         className={`w-full p-4 rounded-xl text-lg font-bold shadow-md transition-all duration-200 transform active:scale-95 ${
-          isSaving || !reflectionText.trim() || !mood
+          isSaving || !reflectionText.trim() || selectedMoods.length === 0
             ? 'bg-purple-200 text-purple-700 cursor-not-allowed'
             : 'bg-purple-600 text-white hover:bg-purple-700'
         }`}

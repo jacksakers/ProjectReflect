@@ -27,7 +27,7 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
     });
   };
 
-  // Get mood emoji and label
+  // Get mood emoji and label (supports multiple moods)
   const getMoodDisplay = () => {
     const moodMap = {
       peaceful: { emoji: '😌', label: 'Peaceful' },
@@ -40,7 +40,14 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
       tired: { emoji: '😴', label: 'Tired' },
       frustrated: { emoji: '😤', label: 'Frustrated' }
     };
-    return moodMap[entry.mood] || { emoji: '💭', label: 'Reflective' };
+    
+    // Handle multiple moods
+    if (entry.moods && Array.isArray(entry.moods) && entry.moods.length > 0) {
+      return entry.moods.map(mood => moodMap[mood] || { emoji: '💭', label: 'Reflective' });
+    }
+    
+    // Fallback to single mood
+    return [moodMap[entry.mood] || { emoji: '💭', label: 'Reflective' }];
   };
 
   // Get meditation type display name
@@ -60,52 +67,91 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
     return nameMap[entry.meditationType] || entry.meditationType;
   };
 
-  // Get body location display (uses flat field structure)
-  const getBodyLocationLabel = () => {
-    if (!entry.bodyLocation) return null;
-    const bodyMap = {
-      tense_shoulders: 'Tense Shoulders',
-      jittery_stomach: 'Jittery Stomach',
-      tight_chest: 'Tight Chest',
-      racing_heart: 'Racing Heart',
-      heavy_head: 'Heavy Head',
-      calm_body: 'Calm & Centered',
-      tired_everywhere: 'Tired Everywhere'
-    };
-    return bodyMap[entry.bodyLocation] || entry.bodyLocation;
+  // Get body location display (supports both array and single value)
+  const getBodyLocationLabels = () => {
+    // Handle new array format
+    if (entry.bodyLocations && Array.isArray(entry.bodyLocations)) {
+      const bodyMap = {
+        tense_shoulders: 'Tense Shoulders',
+        jittery_stomach: 'Jittery Stomach',
+        tight_chest: 'Tight Chest',
+        racing_heart: 'Racing Heart',
+        heavy_head: 'Heavy Head',
+        calm_body: 'Calm & Centered',
+        tired_everywhere: 'Tired Everywhere'
+      };
+      return entry.bodyLocations.map(loc => bodyMap[loc] || loc);
+    }
+    // Handle legacy single value
+    if (entry.bodyLocation) {
+      const bodyMap = {
+        tense_shoulders: 'Tense Shoulders',
+        jittery_stomach: 'Jittery Stomach',
+        tight_chest: 'Tight Chest',
+        racing_heart: 'Racing Heart',
+        heavy_head: 'Heavy Head',
+        calm_body: 'Calm & Centered',
+        tired_everywhere: 'Tired Everywhere'
+      };
+      return [bodyMap[entry.bodyLocation] || entry.bodyLocation];
+    }
+    return [];
   };
 
-  // Get thought category label (uses flat field structure)
-  const getThoughtLabel = () => {
-    if (!entry.thoughtCategory) return null;
-    const thoughtMap = {
-      work: 'Work',
-      relationship: 'Relationship',
-      self: 'Self',
-      family: 'Family',
-      health: 'Health',
-      future: 'Future'
-    };
-    return thoughtMap[entry.thoughtCategory] || entry.thoughtCategory;
+  // Get thought category labels (supports both array and single value)
+  const getThoughtLabels = () => {
+    // Handle new array format
+    if (entry.thoughtCategories && Array.isArray(entry.thoughtCategories)) {
+      const thoughtMap = {
+        work: 'Work',
+        relationship: 'Relationship',
+        self: 'Self',
+        family: 'Family',
+        health: 'Health',
+        future: 'Future',
+        other: 'Other'
+      };
+      return entry.thoughtCategories.map(cat => thoughtMap[cat] || cat);
+    }
+    // Handle legacy single value
+    if (entry.thoughtCategory) {
+      const thoughtMap = {
+        work: 'Work',
+        relationship: 'Relationship',
+        self: 'Self',
+        family: 'Family',
+        health: 'Health',
+        future: 'Future',
+        other: 'Other'
+      };
+      return [thoughtMap[entry.thoughtCategory] || entry.thoughtCategory];
+    }
+    return [];
   };
   
   // Get emoji for thought category
-  const getThoughtEmoji = () => {
-    if (!entry.thoughtCategory) return '💭';
+  const getThoughtEmojis = () => {
     const emojiMap = {
       work: '💼',
       relationship: '💕',
       self: '🪞',
       family: '👨‍👩‍👧‍👦',
       health: '🏥',
-      future: '🔮'
+      future: '🔮',
+      other: '💭'
     };
-    return emojiMap[entry.thoughtCategory] || '💭';
+    
+    if (entry.thoughtCategories && Array.isArray(entry.thoughtCategories)) {
+      return entry.thoughtCategories.map(cat => emojiMap[cat] || '💭');
+    }
+    if (entry.thoughtCategory) {
+      return [emojiMap[entry.thoughtCategory] || '💭'];
+    }
+    return ['💭'];
   };
   
   // Get emoji for body location
-  const getBodyEmoji = () => {
-    if (!entry.bodyLocation) return '🧘';
+  const getBodyEmojis = () => {
     const emojiMap = {
       tense_shoulders: '😣',
       jittery_stomach: '🦋',
@@ -115,10 +161,17 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
       calm_body: '😌',
       tired_everywhere: '😴'
     };
-    return emojiMap[entry.bodyLocation] || '🧘';
+    
+    if (entry.bodyLocations && Array.isArray(entry.bodyLocations)) {
+      return entry.bodyLocations.map(loc => emojiMap[loc] || '🧘');
+    }
+    if (entry.bodyLocation) {
+      return [emojiMap[entry.bodyLocation] || '🧘'];
+    }
+    return ['🧘'];
   };
 
-  const mood = getMoodDisplay();
+  const moods = getMoodDisplay();
 
   return (
     <>
@@ -144,13 +197,17 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
                   {formatDate(entry.createdAt)}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-3xl" role="img" aria-label="Mood">
-                  {mood.emoji}
-                </span>
-                <span className="font-nunito text-lg font-bold text-purple-900">
-                  {mood.label}
-                </span>
+              <div className="flex items-center gap-3 flex-wrap">
+                {moods.map((mood, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-3xl" role="img" aria-label="Mood">
+                      {mood.emoji}
+                    </span>
+                    <span className="font-nunito text-lg font-bold text-purple-900">
+                      {mood.label}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
             
@@ -184,28 +241,43 @@ function EntryDetailModal({ entry, isOpen, onClose, onDelete }) {
             )}
 
             {/* Triage context */}
-            {(entry.thoughtCategory || entry.bodyLocation) && (
+            {((entry.thoughtCategories && entry.thoughtCategories.length > 0) || 
+              (entry.thoughtCategory) || 
+              (entry.bodyLocations && entry.bodyLocations.length > 0) || 
+              (entry.bodyLocation)) && (
               <div className="bg-purple-50 rounded-2xl p-4 space-y-3">
                 <h4 className="font-nunito font-bold text-purple-900 text-sm uppercase tracking-wide">
                   Reflection Context
                 </h4>
                 
-                {getThoughtLabel() && (
+                {getThoughtLabels().length > 0 && (
                   <div className="flex items-start gap-3">
-                    <div className="text-lg">{getThoughtEmoji()}</div>
+                    <div className="flex gap-1 text-lg">
+                      {getThoughtEmojis().map((emoji, idx) => (
+                        <span key={idx}>{emoji}</span>
+                      ))}
+                    </div>
                     <div>
                       <div className="font-nunito text-xs text-purple-600 mb-0.5">What was on your mind</div>
-                      <div className="font-nunito text-purple-900">{getThoughtLabel()}</div>
+                      <div className="font-nunito text-purple-900">
+                        {getThoughtLabels().join(', ')}
+                      </div>
                     </div>
                   </div>
                 )}
                 
-                {getBodyLocationLabel() && (
+                {getBodyLocationLabels().length > 0 && (
                   <div className="flex items-start gap-3">
-                    <div className="text-lg">{getBodyEmoji()}</div>
+                    <div className="flex gap-1 text-lg">
+                      {getBodyEmojis().map((emoji, idx) => (
+                        <span key={idx}>{emoji}</span>
+                      ))}
+                    </div>
                     <div>
                       <div className="font-nunito text-xs text-purple-600 mb-0.5">Where you felt it</div>
-                      <div className="font-nunito text-purple-900">{getBodyLocationLabel()}</div>
+                      <div className="font-nunito text-purple-900">
+                        {getBodyLocationLabels().join(', ')}
+                      </div>
                     </div>
                   </div>
                 )}

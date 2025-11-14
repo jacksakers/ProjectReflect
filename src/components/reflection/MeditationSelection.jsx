@@ -54,22 +54,26 @@ function MeditationSelection({ triageAnswers, onSelect, onBack }) {
 
   // Smart meditation recommendation logic
   const getSuggestedMeditations = () => {
-    const { thoughtCategory, bodyLocation } = triageAnswers;
+    const { thoughtCategories = [], bodyLocations = [] } = triageAnswers;
     const allMeditations = Object.values(meditations);
     
     // Score each meditation based on how well it matches
     const scored = allMeditations.map(meditation => {
       let score = 0;
       
-      // Check if body location matches
-      if (meditation.matchKeywords.includes(bodyLocation)) {
-        score += 2;
-      }
+      // Check if any body location matches
+      bodyLocations.forEach(location => {
+        if (meditation.matchKeywords.includes(location)) {
+          score += 2;
+        }
+      });
       
-      // Check if thought category matches
-      if (meditation.matchKeywords.includes(thoughtCategory)) {
-        score += 2;
-      }
+      // Check if any thought category matches
+      thoughtCategories.forEach(category => {
+        if (meditation.matchKeywords.includes(category)) {
+          score += 2;
+        }
+      });
       
       return { ...meditation, score };
     });
