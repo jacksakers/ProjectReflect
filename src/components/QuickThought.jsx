@@ -122,9 +122,6 @@ function QuickThought({ isOpen, onClose }) {
               className="w-full h-32 p-4 rounded-xl border-2 border-purple-200 bg-white focus:border-purple-400 focus:ring-0 font-nunito resize-none"
               autoFocus
             />
-            <p className="font-nunito text-xs text-purple-600 mt-1">
-              Press Ctrl+Enter to save quickly
-            </p>
           </div>
 
           {/* Optional: How are you feeling? */}
