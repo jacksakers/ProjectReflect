@@ -10,13 +10,16 @@
 import { useState, useMemo } from 'react';
 import { MagnifyingGlassIcon, CalendarIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useJournalEntries } from '../hooks/useJournalEntries';
+import { useTimeCapsules } from '../hooks/useTimeCapsules';
 import CalendarView from '../components/journal/CalendarView';
 import EntryCard from '../components/journal/EntryCard';
 import EntryDetailModal from '../components/journal/EntryDetailModal';
+import TimeCapsuleDetailModal from '../components/timecapsule/TimeCapsuleDetailModal';
 import DeleteConfirmationToast from '../components/journal/DeleteConfirmationToast';
 
 function JournalPage() {
   const { entries, loading, error, deleteEntry } = useJournalEntries();
+  const { saveReply, deleteCapsule } = useTimeCapsules(); // For time capsule replies
   const [searchQuery, setSearchQuery] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -33,6 +36,8 @@ function JournalPage() {
       filtered = filtered.filter(entry => 
         entry.text?.toLowerCase().includes(query) ||
         entry.mood?.toLowerCase().includes(query) ||
+        entry.category?.toLowerCase().includes(query) ||
+        entry.thoughtCategory?.toLowerCase().includes(query) ||
         entry.triageAnswers?.customThought?.toLowerCase().includes(query)
       );
     }
@@ -60,6 +65,13 @@ function JournalPage() {
     setEntryToDelete(entry);
   };
 
+  const handleTimeCapsuleDeleteClick = async (capsuleId) => {
+    const result = await deleteCapsule(capsuleId);
+    if (!result.success) {
+      alert('Failed to delete time capsule. Please try again.');
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!entryToDelete) return;
     
@@ -72,6 +84,8 @@ function JournalPage() {
       alert('Failed to delete entry. Please try again.');
     }
   };
+
+  const isTimeCapsule = (entry) => entry && entry.type === 'timeCapsule';
 
   const handleCancelDelete = () => {
     setEntryToDelete(null);
@@ -205,13 +219,23 @@ function JournalPage() {
         )}
       </div>
 
-      {/* Entry Detail Modal */}
-      <EntryDetailModal
-        entry={selectedEntry}
-        isOpen={!!selectedEntry}
-        onClose={() => setSelectedEntry(null)}
-        onDelete={handleDeleteClick}
-      />
+      {/* Entry/Time Capsule Detail Modal */}
+      {selectedEntry && isTimeCapsule(selectedEntry) ? (
+        <TimeCapsuleDetailModal
+          capsule={selectedEntry}
+          isOpen={!!selectedEntry}
+          onClose={() => setSelectedEntry(null)}
+          onDelete={handleTimeCapsuleDeleteClick}
+          onSaveReply={saveReply}
+        />
+      ) : (
+        <EntryDetailModal
+          entry={selectedEntry}
+          isOpen={!!selectedEntry}
+          onClose={() => setSelectedEntry(null)}
+          onDelete={handleDeleteClick}
+        />
+      )}
 
       {/* Delete Confirmation Toast */}
       <DeleteConfirmationToast

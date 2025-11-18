@@ -1,17 +1,20 @@
 /**
  * EntryCard Component
  * 
- * Displays a journal entry in the list view:
+ * Displays a journal entry or time capsule in the list view:
  * - Date and time
  * - Mood emoji
  * - Text snippet (truncated)
  * - Meditation type badge (if applicable)
+ * - Time capsule badge (if applicable)
  * - Click to open full entry
  */
 
-import { CalendarIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, SparklesIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 
 function EntryCard({ entry, onClick }) {
+  const isTimeCapsule = entry.type === 'timeCapsule';
+  
   // Format date nicely
   const formatDate = (date) => {
     if (!date) return 'Unknown date';
@@ -51,6 +54,7 @@ function EntryCard({ entry, onClick }) {
   // Get mood emoji
   const getMoodEmoji = () => {
     const moodMap = {
+      // Regular reflection moods
       peaceful: '😌',
       calm: '🙂',
       neutral: '😐',
@@ -59,9 +63,13 @@ function EntryCard({ entry, onClick }) {
       happy: '😊',
       anxious: '😰',
       tired: '😴',
-      frustrated: '😤'
+      frustrated: '😤',
+      // Time capsule moods
+      curious: '🤔',
+      excited: '✨',
+      reflective: '🪞'
     };
-    return moodMap[entry.mood] || '💭';
+    return moodMap[entry.mood] || (isTimeCapsule ? '💌' : '💭');
   };
 
   // Truncate text for preview
@@ -92,12 +100,18 @@ function EntryCard({ entry, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-all duration-200 text-left hover:scale-[1.01] active:scale-[0.99]"
+      className={`w-full rounded-2xl shadow-sm p-5 hover:shadow-md transition-all duration-200 text-left hover:scale-[1.01] active:scale-[0.99] ${
+        isTimeCapsule ? 'bg-gradient-to-br from-green-50 to-white border-2 border-green-200' : 'bg-white'
+      }`}
     >
       {/* Header with date and mood */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2 text-purple-600">
-          <CalendarIcon className="w-4 h-4" />
+          {isTimeCapsule ? (
+            <EnvelopeIcon className="w-4 h-4" />
+          ) : (
+            <CalendarIcon className="w-4 h-4" />
+          )}
           <span className="font-nunito text-sm font-semibold">
             {formatDate(entry.createdAt)}
           </span>
@@ -114,6 +128,14 @@ function EntryCard({ entry, onClick }) {
 
       {/* Footer with metadata */}
       <div className="flex items-center gap-2 flex-wrap">
+        {/* Time capsule badge */}
+        {isTimeCapsule && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-nunito font-semibold">
+            💌 Time Capsule
+            {entry.openedPrematurely && ' (Opened Early)'}
+          </span>
+        )}
+
         {/* Meditation badge */}
         {(entry.meditationType || entry.meditationName) && (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-nunito font-semibold">
@@ -129,8 +151,8 @@ function EntryCard({ entry, onClick }) {
           </span>
         )}
 
-        {/* Thought category badge */}
-        {entry.thoughtCategory && (
+        {/* Thought/Time capsule category badge */}
+        {(entry.thoughtCategory || entry.category) && (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-nunito">
             {(() => {
               const categoryMap = {
@@ -139,10 +161,20 @@ function EntryCard({ entry, onClick }) {
                 self: '🪞',
                 family: '👨‍👩‍👧‍👦',
                 health: '🏥',
-                future: '🔮'
+                future: '🔮',
+                dreams: '🔮',
+                gratitude: '✨',
+                question: '❓'
               };
-              return categoryMap[entry.thoughtCategory] || '💭';
+              return categoryMap[entry.thoughtCategory || entry.category] || '💭';
             })()}
+          </span>
+        )}
+        
+        {/* Reply badge for time capsules */}
+        {isTimeCapsule && entry.includeReply && entry.replyText && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-nunito font-semibold">
+            💬 Replied
           </span>
         )}
       </div>
