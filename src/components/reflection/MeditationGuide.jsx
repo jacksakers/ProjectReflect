@@ -21,6 +21,7 @@ function MeditationGuide({ meditation, onComplete }) {
   
   const audioRef = useRef(null);
   const endBellRef = useRef(null);
+  const wakeLockRef = useRef(null);
 
   // Meditation scripts based on type
   const meditationScripts = {
@@ -214,6 +215,56 @@ function MeditationGuide({ meditation, onComplete }) {
   const script = meditationScripts[meditation.id] || meditationScripts.breath_focus;
   const totalPhases = script.length;
   const currentStep = script[currentPhase];
+
+  // Request wake lock when component mounts
+  useEffect(() => {
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLockRef.current = await navigator.wakeLock.request('screen');
+          console.log('Screen wake lock activated');
+          
+          // Re-request if wake lock is released (e.g., tab becomes inactive)
+          wakeLockRef.current.addEventListener('release', () => {
+            console.log('Screen wake lock released');
+          });
+        }
+      } catch (err) {
+        console.error('Wake lock request failed:', err);
+      }
+    };
+
+    requestWakeLock();
+
+    // Release wake lock when component unmounts
+    return () => {
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    };
+  }, []);
+
+  // Re-request wake lock when app becomes visible again
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && !wakeLockRef.current) {
+        try {
+          if ('wakeLock' in navigator) {
+            wakeLockRef.current = await navigator.wakeLock.request('screen');
+            console.log('Screen wake lock re-activated');
+          }
+        } catch (err) {
+          console.error('Wake lock re-request failed:', err);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   // Play bell sound when phase changes
   useEffect(() => {
