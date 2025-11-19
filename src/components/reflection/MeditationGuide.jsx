@@ -281,12 +281,15 @@ function MeditationGuide({ meditation, onComplete }) {
   }, [isMuted]);
   
   // Play end bell when meditation completes
+  const hasPlayedEndBell = useRef(false);
+  
   useEffect(() => {
     if (currentPhase === totalPhases - 1 && timeElapsed >= currentStep.duration) {
-      if (!isMuted && endBellRef.current) {
+      if (!isMuted && endBellRef.current && !hasPlayedEndBell.current) {
         endBellRef.current.play().catch(err => {
           console.log('End bell playback failed:', err);
         });
+        hasPlayedEndBell.current = true;
       }
     }
   }, [currentPhase, totalPhases, timeElapsed, currentStep.duration, isMuted]);

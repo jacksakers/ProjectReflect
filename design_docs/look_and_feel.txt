@@ -23,3 +23,7 @@ choice. It's rounded, friendly, and highly legible. It feels modern and gentle, 
  class="w-full p-4 rounded-xl border-2 border-purple-200 bg-white focus:border-purple-400 
  focus:ring-0"Cards: Softly rounded with gentle shadows.class="bg-white rounded-2xl 
  shadow-sm p-6"
+
+
+ KEEP IN MIND: the main use of this will be on mobile devices so make sure it works
+on that screen aspect ratio.

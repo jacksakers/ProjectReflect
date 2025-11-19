@@ -1,0 +1,161 @@
+The Garden: Gamification & Asset Design
+
+1. Core Concept
+
+The Garden is a "gentle gamification" system. Users earn "Water Drops" by completing mindfulness activities. These drops nurture a virtual plant from a generic seed into a unique, collectable flower.
+
+Philosophy:
+
+Variety: The user should rarely grow the same plant twice in a row.
+
+Extendability: Adding a new plant type should only require uploading images and adding one database entry—no code changes.
+
+Pacing: Different plants have different "difficulty" (growth times).
+
+2. Asset Pipeline & Naming Convention
+
+To make this extendable, we will use a strict naming convention for your art files. This allows the React code to dynamically construct the URL without needing hardcoded imports.
+
+File Format
+
+We will use PNGs with transparent backgrounds.
+
+Directory Structure (Firebase Storage)
+
+We will organize assets by a unique plantId.
+
+gs://project-reflect/game_assets/plants/{plantId}/{stage}.png
+
+The Naming Convention
+
+Every plant will have 5 Standard Stages (0-4).
+
+Stage 0: seed.png (Generic or specific seed packet)
+
+Stage 1: sprout.png (Just breaking the soil)
+
+Stage 2: sapling.png (Leaves forming, getting taller)
+
+Stage 3: bud.png (Flower bud visible, ready to bloom)
+
+Stage 4: bloomed.png (Full glory - The "Trophy" state)
+
+Example for a "Cosmic Rose":
+
+ID: cosmic_rose
+
+Path: /game_assets/plants/cosmic_rose/sprout.png
+
+3. Database Structure (Firestore)
+
+We need a new collection called plant_types to act as the "Catalog" or "Pokedex" of available plants. This separates the rules of the game from the user's progress.
+
+A. The Catalog: plant_types Collection
+
+Each document represents a species of plant.
+
+Document ID: plantId (e.g., cosmic_rose, golden_fern)
+
+{
+  "name": "Cosmic Rose",
+  "description": "A flower that blooms only under starlight.",
+  "rarity": "rare", // common, rare, legendary
+  "maxGrowthPoints": 15, // How many "days" (or actions) to fully grow
+  "assetsBaseUrl": "plants/cosmic_rose", // Folder path in Storage
+  "isActive": true // If false, this plant won't drop from seeds (good for seasonal items)
+}
+
+
+B. The User State: users/{uid}
+
+We update the user's document to track the active plant.
+
+{
+  "currentPlant": {
+    "plantId": "cosmic_rose", // Links to plant_types
+    "currentPoints": 4, // Current progress
+    "maxPoints": 15, // Copied from plant_types (snapshot) to prevent issues if you balance later
+    "stage": 1, // Calculated field (0-4)
+    "startedAt": "2025-11-19T..."
+  },
+  // The "Bag of Seeds" (See Section 5)
+  "seedQueue": ["golden_fern", "basic_tulip", "moon_cactus"]
+}
+
+
+4. The Logic
+
+Growth Formula
+
+We map the currentPoints to the 5 image stages (0-4).
+
+// Utility Logic
+const getPlantStage = (currentPoints, maxPoints) => {
+  if (currentPoints >= maxPoints) return 4; // Bloomed
+  if (currentPoints === 0) return 0; // Seed
+  
+  // Divide the middle progress into 3 slices (Stage 1, 2, 3)
+  const progress = currentPoints / maxPoints;
+  if (progress < 0.33) return 1;
+  if (progress < 0.66) return 2;
+  return 3;
+};
+
+
+Action Loop
+
+User Action: User completes a Daily Reflection.
+
+Update: Increment currentPlant.currentPoints by +1.
+
+Check: - If currentPoints >= maxPoints:
+- Move currentPlant object to users/{uid}/garden collection.
+- Trigger "New Seed Logic" (Section 5).
+
+Else:
+
+Recalculate stage.
+
+Update UI.
+
+5. The "New Seed" Logic (Randomization)
+
+To ensure the user doesn't get the same flower twice in a row, and to ensure they eventually see all your art, we won't use pure random selection. We will use a "Deck of Cards" (Seed Queue) system.
+
+The Algorithm:
+
+Check Queue: Look at user.seedQueue.
+
+If Queue is Empty:
+
+Fetch ALL active IDs from plant_types.
+
+Shuffle them (Randomize order).
+
+Save this list to user.seedQueue.
+
+Pop: Take the first ID from seedQueue.
+
+Remove: Update the user doc to remove that ID from the queue.
+
+Assign: Set this ID as the new currentPlant.
+
+This ensures that if you have 10 plants, the user will grow all 10 unique plants before they see a repeat.
+
+6. Extendability Workflow (How you add art)
+
+When you draw a new flower (e.g., "Neon Tulip"):
+
+Export: Save your 5 images (seed.png...bloomed.png).
+
+Upload: Go to Firebase Console -> Storage. Create folder plants/neon_tulip. Upload files.
+
+Register: Go to Firestore -> plant_types collection. Add new document neon_tulip:
+
+name: "Neon Tulip"
+
+maxGrowthPoints: 10 (Make it a quick grow!)
+
+rarity: "common"
+
+Done: The next time a user's "Seed Queue" refills, the Neon Tulip will be in the mix. No code deployment needed.

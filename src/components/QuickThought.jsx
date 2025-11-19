@@ -13,6 +13,7 @@ import { XMarkIcon, MicrophoneIcon } from '@heroicons/react/24/outline';
 import { db } from '../firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { usePlantGrowth } from '../hooks/usePlantGrowth';
 
 function QuickThought({ isOpen, onClose }) {
   const [thought, setThought] = useState('');
@@ -20,6 +21,7 @@ function QuickThought({ isOpen, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { currentUser } = useAuth();
+  const { addPoints } = usePlantGrowth();
 
   // Quick mood options (simpler than full reflection)
   const moods = [
@@ -64,6 +66,9 @@ function QuickThought({ isOpen, onClose }) {
         photoUrl: null,
         tags: []
       });
+
+      // Award 1 point for quick thought
+      await addPoints(1);
 
       // Reset and close
       setThought('');

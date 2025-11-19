@@ -94,10 +94,13 @@ function TimeCapsuleDetailModal({ capsule, isOpen, onClose, onDelete, onSaveRepl
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-        <div className="bg-orange-50 w-full h-full overflow-y-auto animate-slide-up max-h-[80vh]">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center 
+              justify-center z-50 animate-fade-in">
+        <div className="bg-orange-50 w-full h-full overflow-y-auto animate-slide-up
+                max-h-[80vh]">
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-purple-100 p-4 flex justify-between items-center shadow-sm z-10">
+          <div className="sticky top-0 bg-white border-b border-purple-100 p-4 flex 
+                  justify-between items-center shadow-sm z-10">
             <div className="flex-1">
               <h2 className="font-nunito text-xl font-bold text-purple-900">
                 💌 Message from Past You

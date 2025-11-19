@@ -80,6 +80,10 @@ Purpose: To centralize common, non-React logic (DRY).
 
 Location: src/utils/
 
+6. KEEP THE MODALS VISIBLE below the top nav and above the bottom navigation!!!!
+
+add some padding to the top and bottom to make sure it has clearance on a mobile device. 
+
 Examples:
 
 formatDate.js: Functions for formatting Firestore timestamps into human-readable strings (e.g., "On this day...").
@@ -89,3 +93,5 @@ firebase.js: Centralized Firebase app initialization.
 calculations.js: Logic for calculating plant growth, etc.
 
 By following these guidelines, we'll build a high-quality application that can easily grow and evolve with our vision.
+
+

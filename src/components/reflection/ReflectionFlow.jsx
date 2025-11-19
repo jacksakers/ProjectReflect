@@ -13,6 +13,7 @@ import TriageQuestions from './TriageQuestions';
 import MeditationSelection from './MeditationSelection';
 import MeditationGuide from './MeditationGuide';
 import PostReflection from './PostReflection';
+import { usePlantGrowth } from '../../hooks/usePlantGrowth';
 
 const STEPS = {
   TRIAGE: 'triage',
@@ -26,6 +27,7 @@ function ReflectionFlow({ onComplete, onClose }) {
   const [currentStep, setCurrentStep] = useState(STEPS.TRIAGE);
   const [triageAnswers, setTriageAnswers] = useState({});
   const [selectedMeditation, setSelectedMeditation] = useState(null);
+  const { addPoints } = usePlantGrowth();
 
   const handleTriageComplete = (answers) => {
     setTriageAnswers(answers);
@@ -42,6 +44,9 @@ function ReflectionFlow({ onComplete, onClose }) {
   };
 
   const handleReflectionComplete = async (reflectionData) => {
+    // Award 2 points for completing a full reflection
+    await addPoints(2);
+    
     // This will save the complete entry to Firestore
     setCurrentStep(STEPS.COMPLETE);
     if (onComplete) {

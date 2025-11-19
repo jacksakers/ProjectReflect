@@ -33,7 +33,7 @@ function Sidebar({ isOpen, onClose }) {
   };
 
   const menuItems = [
-    { icon: SparklesIcon, label: 'Your Full Garden', onClick: () => {} },
+    { icon: SparklesIcon, label: 'Your Full Garden', onClick: () => navigate('/garden') },
     { icon: UserCircleIcon, label: 'Profile', onClick: () => {} },
     { icon: Cog6ToothIcon, label: 'Settings', onClick: () => {} },
   ];

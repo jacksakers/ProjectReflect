@@ -13,6 +13,7 @@ import MainLayout from './components/layout/MainLayout';
 import HomePage from './pages/HomePage';
 import JournalPage from './pages/JournalPage';
 import FuturePage from './pages/FuturePage';
+import GardenPage from './pages/GardenPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 
@@ -44,6 +45,13 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <FuturePage />
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/garden" element={
+            <ProtectedRoute>
+              <MainLayout>
+                <GardenPage />
               </MainLayout>
             </ProtectedRoute>
           } />

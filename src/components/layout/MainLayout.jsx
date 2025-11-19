@@ -27,6 +27,8 @@ function MainLayout({ children }) {
         return 'Journal';
       case '/future':
         return 'Future';
+      case '/garden':
+        return 'Garden';
       default:
         return 'Project Reflect';
     }
