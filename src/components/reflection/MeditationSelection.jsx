@@ -49,11 +49,20 @@ function MeditationSelection({ triageAnswers, onSelect, onBack }) {
       description: 'Connect with the present moment through your senses.',
       emoji: '🌿',
       matchKeywords: ['racing_heart', 'heavy_head', 'work']
+    },
+    self_guided: {
+      id: 'self_guided',
+      name: 'Self-Guided Meditation',
+      duration: 10, // Default duration
+      description: 'Meditate at your own pace with interval bells to guide you.',
+      emoji: '🔔',
+      matchKeywords: [] // Always available, not keyword-based
     }
   };
 
   // Smart meditation recommendation logic
   const getSuggestedMeditations = () => {
+    // Always include self-guided as an option
     const { thoughtCategories = [], bodyLocations = [] } = triageAnswers;
     const allMeditations = Object.values(meditations);
     
@@ -78,9 +87,13 @@ function MeditationSelection({ triageAnswers, onSelect, onBack }) {
       return { ...meditation, score };
     });
 
-    // Sort by score and return top 3
-    scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, 3);
+    // Filter out self-guided from scoring, then get top 2
+    const scoredWithoutSelfGuided = scored.filter(m => m.id !== 'self_guided');
+    scoredWithoutSelfGuided.sort((a, b) => b.score - a.score);
+    const topTwo = scoredWithoutSelfGuided.slice(0, 2);
+    
+    // Always add self-guided as the third option
+    return [...topTwo, meditations.self_guided];
   };
 
   const suggestions = getSuggestedMeditations();

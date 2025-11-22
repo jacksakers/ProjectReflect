@@ -18,6 +18,8 @@ function MeditationGuide({ meditation, onComplete }) {
     const saved = localStorage.getItem('meditationBellMuted');
     return saved === 'true';
   });
+  const [selectedDuration, setSelectedDuration] = useState(10); // For self-guided meditation
+  const [showDurationSelect, setShowDurationSelect] = useState(meditation.id === 'self_guided');
   
   const audioRef = useRef(null);
   const endBellRef = useRef(null);
@@ -212,7 +214,43 @@ function MeditationGuide({ meditation, onComplete }) {
     ]
   };
 
-  const script = meditationScripts[meditation.id] || meditationScripts.breath_focus;
+  // Generate self-guided meditation script based on selected duration
+  const generateSelfGuidedScript = (durationMinutes) => {
+    const durationSeconds = durationMinutes * 60;
+    const intervalSeconds = Math.floor(durationSeconds / 5); // 5 equally spaced bells
+    
+    return [
+      {
+        title: "Begin your meditation",
+        text: `Settle into a comfortable position. Close your eyes or soften your gaze. Take a few deep breaths. The bell will ring 5 times during your ${durationMinutes}-minute meditation to gently guide you.`,
+        duration: intervalSeconds
+      },
+      {
+        title: "Continue breathing",
+        text: "Stay present with your breath. Let thoughts come and go without attachment.",
+        duration: intervalSeconds
+      },
+      {
+        title: "You're doing well",
+        text: "Notice the sensations in your body. Stay with your breath.",
+        duration: intervalSeconds
+      },
+      {
+        title: "Almost there",
+        text: "Continue your practice. Be kind to yourself.",
+        duration: intervalSeconds
+      },
+      {
+        title: "Final moments",
+        text: "Take these last moments to deepen your awareness. When you're ready, gently return.",
+        duration: intervalSeconds
+      }
+    ];
+  };
+
+  const script = meditation.id === 'self_guided' 
+    ? generateSelfGuidedScript(selectedDuration)
+    : (meditationScripts[meditation.id] || meditationScripts.breath_focus);
   const totalPhases = script.length;
   const currentStep = script[currentPhase];
 
@@ -330,6 +368,59 @@ function MeditationGuide({ meditation, onComplete }) {
   const toggleMute = () => {
     setIsMuted(!isMuted);
   };
+
+  const handleStartSelfGuided = () => {
+    setShowDurationSelect(false);
+  };
+
+  // Show duration selector for self-guided meditation
+  if (showDurationSelect && meditation.id === 'self_guided') {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <div className="text-center mb-8">
+          <h2 className="font-nunito text-3xl font-bold text-purple-900 mb-4">
+            Self-Guided Meditation
+          </h2>
+          <p className="font-nunito text-lg text-purple-700 mb-8">
+            Choose how long you'd like to meditate. The bell will ring 5 times equally spaced throughout your session, plus once at the end.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
+          <label className="font-nunito text-lg font-semibold text-purple-900 mb-4 block">
+            Meditation Duration
+          </label>
+          
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {[5, 10, 15, 20, 25, 30].map((minutes) => (
+              <button
+                key={minutes}
+                onClick={() => setSelectedDuration(minutes)}
+                className={`p-4 rounded-xl font-nunito text-lg font-bold transition-all duration-200 ${
+                  selectedDuration === minutes
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-orange-100 text-purple-900 hover:bg-orange-200'
+                }`}
+              >
+                {minutes} min
+              </button>
+            ))}
+          </div>
+
+          <div className="text-center text-purple-700 font-nunito text-sm">
+            Selected: {selectedDuration} minutes
+          </div>
+        </div>
+
+        <button
+          onClick={handleStartSelfGuided}
+          className="w-full p-4 bg-purple-600 text-white rounded-xl text-lg font-bold shadow-md transition-all duration-200 transform active:scale-95 hover:bg-purple-700"
+        >
+          Begin Meditation
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col justify-between">

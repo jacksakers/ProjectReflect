@@ -28,17 +28,15 @@ gs://project-reflect/game_assets/plants/{plantId}/{stage}.png
 
 The Naming Convention
 
-Every plant will have 5 Standard Stages (0-4).
+Every plant will have 4 Standard Stages (0-3).
 
 Stage 0: seed.png (Generic or specific seed packet)
 
 Stage 1: sprout.png (Just breaking the soil)
 
-Stage 2: sapling.png (Leaves forming, getting taller)
+Stage 2: bud.png (Flower bud visible, ready to bloom)
 
-Stage 3: bud.png (Flower bud visible, ready to bloom)
-
-Stage 4: bloomed.png (Full glory - The "Trophy" state)
+Stage 3: bloomed.png (Full glory - The "Trophy" state)
 
 Example for a "Cosmic Rose":
 

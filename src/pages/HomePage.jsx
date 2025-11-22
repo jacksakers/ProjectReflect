@@ -12,15 +12,11 @@
 import { useState } from 'react';
 import ReflectionFlow from '../components/reflection/ReflectionFlow';
 import QuickThought from '../components/QuickThought';
-import { usePlantGrowth } from '../hooks/usePlantGrowth';
-import { getStageName, getProgressPercentage, getPointsToNextStage } from '../utils/plantGrowth';
+import PlantProgress from '../components/home/PlantProgress';
 
 function HomePage() {
   const [showReflectionFlow, setShowReflectionFlow] = useState(false);
   const [showQuickThought, setShowQuickThought] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  
-  const { currentPlant, plantType, isLoading, getCurrentStage } = usePlantGrowth();
   
   const handleReflectionComplete = (reflectionData) => {
     console.log('Reflection completed:', reflectionData);
@@ -35,57 +31,11 @@ function HomePage() {
       />
     );
   }
-
-  // Get current stage and plant info
-  const currentStage = getCurrentStage();
-  const stageName = getStageName(currentStage);
-  const progressPercent = currentPlant 
-    ? getProgressPercentage(currentPlant.currentPoints, currentPlant.maxPoints)
-    : 0;
-  const pointsToNext = currentPlant 
-    ? getPointsToNextStage(currentPlant.currentPoints, currentPlant.maxPoints)
-    : 0;
-  
-  // Stage emojis
-  const stageEmojis = ['🌰', '🌱', '🌿', '🌺', '🌸'];
-  const currentEmoji = stageEmojis[currentStage] || '🌱';
   
   return (
     <div className="space-y-4">
       {/* Plant Progress Section */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <div className="text-center">
-          {isLoading ? (
-            <div className="text-6xl mb-4">⏳</div>
-          ) : imageError || !plantType ? (
-            // Fallback to emoji if image fails or no plant type
-            <div className="text-6xl mb-4">{currentEmoji}</div>
-          ) : (
-            // You can add actual image loading here later
-            <div className="text-6xl mb-4">{currentEmoji}</div>
-          )}
-          
-          <h2 className="font-nunito text-xl font-bold text-purple-900 mb-2">
-            {isLoading ? 'Loading your garden...' : 
-             plantType ? `${stageName}: ${plantType.name} is growing!` :
-             `${stageName}: Your plant is growing!`}
-          </h2>
-          
-          {!isLoading && currentPlant && (
-            <>
-              <div className="w-full bg-orange-100 rounded-full h-3 mb-2">
-                <div 
-                  className="bg-purple-600 h-3 rounded-full transition-all duration-500" 
-                  style={{ width: `${progressPercent}%` }}
-                ></div>
-              </div>
-              <p className="font-nunito text-sm text-purple-700">
-                {currentPlant.currentPoints} check-in points • {pointsToNext > 0 ? `${pointsToNext} to next stage` : 'Ready to bloom!'}
-              </p>
-            </>
-          )}
-        </div>
-      </div>
+      <PlantProgress />
 
       {/* Primary CTA */}
       <button 

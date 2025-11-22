@@ -1,3 +1,6 @@
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase/config';
+
 /**
  * Plant Growth Utilities
  * 
@@ -9,19 +12,18 @@
  * Calculate the current plant stage (0-4) based on points
  * @param {number} currentPoints - Points accumulated for current plant
  * @param {number} maxPoints - Total points needed to bloom
- * @returns {number} Stage (0=seed, 1=sprout, 2=sapling, 3=bud, 4=bloomed)
+ * @returns {number} Stage (0=seed, 1=sprout, 2=bud, 3=bloomed)
  */
 export const getPlantStage = (currentPoints, maxPoints) => {
   if (currentPoints <= 0) return 0;
-  if (currentPoints >= maxPoints) return 4;
+  if (currentPoints >= maxPoints) return 3;
   
   const progress = currentPoints / maxPoints;
   
   if (progress < 0.2) return 0;      // seed
   if (progress < 0.4) return 1;      // sprout
-  if (progress < 0.7) return 2;      // sapling
-  if (progress < 1.0) return 3;      // bud
-  return 4;                           // bloomed
+  if (progress < 1.0) return 2;      // bud
+  return 3;                           // bloomed
 };
 
 /**
@@ -30,7 +32,7 @@ export const getPlantStage = (currentPoints, maxPoints) => {
  * @returns {string} Filename (e.g., 'sprout.png')
  */
 export const getStageFilename = (stage) => {
-  const filenames = ['seed.png', 'sprout.png', 'sapling.png', 'bud.png', 'bloomed.png'];
+  const filenames = ['seed.png', 'sprout.png', 'bud.png', 'bloomed.png'];
   return filenames[stage] || 'seed.png';
 };
 
@@ -40,7 +42,7 @@ export const getStageFilename = (stage) => {
  * @returns {string} Display name
  */
 export const getStageName = (stage) => {
-  const names = ['Seed', 'Sprout', 'Sapling', 'Budding', 'Bloomed'];
+  const names = ['Seed', 'Sprout', 'Bud', 'Bloomed'];
   return names[stage] || 'Seed';
 };
 
@@ -60,17 +62,34 @@ export const shuffleArray = (array) => {
 
 /**
  * Get plant image URL with error handling
- * @param {string} plantId - Plant identifier
- * @param {number} stage - Current stage (0-4)
- * @returns {string|null} Image URL or null if unavailable
+ * @param {string} plantId - Plant identifier (e.g., 'pinkadilly')
+ * @param {number} stage - Current stage (0-3)
+ * @param {string} storageFolder - Optional storage folder path from plant_types document
+ * @returns {Promise<string|null>} Image URL or null if unavailable
  */
-export const getPlantImageUrl = (plantId, stage) => {
+export const getPlantImageUrl = async (plantId, stage, storageFolder = null) => {
   if (!plantId) return null;
+
+  console.log('Getting image URL for plantId:', plantId, 'stage:', stage, 'storageFolder:', storageFolder);
   
-  const filename = getStageFilename(stage);
-  // For Firebase Storage, construct the URL
-  // This is a placeholder - you'll need to adjust based on your Firebase Storage setup
-  return `https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/game_assets%2Fplants%2F${plantId}%2F${filename}?alt=media`;
+  try {
+    const filename = getStageFilename(stage);
+    // Use storageFolder if provided, otherwise use plantId
+    const folder = storageFolder || plantId;
+    
+    // Create reference to the file in Firebase Storage
+    const path = `game_assets/plants/${folder}/${filename}`;
+    const imageRef = ref(storage, path);
+    
+    // Get the download URL with token
+    const url = await getDownloadURL(imageRef);
+    console.log('Generated image URL:', url);
+    
+    return url;
+  } catch (error) {
+    console.error('Error getting image URL:', error);
+    return null;
+  }
 };
 
 /**
@@ -96,8 +115,7 @@ export const getPointsToNextStage = (currentPoints, maxPoints) => {
   
   const nextStageThresholds = [
     Math.ceil(maxPoints * 0.2),  // to sprout
-    Math.ceil(maxPoints * 0.4),  // to sapling
-    Math.ceil(maxPoints * 0.7),  // to bud
+    Math.ceil(maxPoints * 0.4),  // to bud
     maxPoints                     // to bloom
   ];
   

@@ -15,7 +15,6 @@ The garden gamification system rewards users for their mindfulness activities by
 - Plants progress through 5 stages:
   - Stage 0: Seed 🌰
   - Stage 1: Sprout 🌱
-  - Stage 2: Sapling 🌿
   - Stage 3: Budding 🌺
   - Stage 4: Bloomed 🌸
 
@@ -132,7 +131,6 @@ Currently, the system uses emoji placeholders. To add actual plant images:
    ```
    /game_assets/plants/{plantId}/seed.png
    /game_assets/plants/{plantId}/sprout.png
-   /game_assets/plants/{plantId}/sapling.png
    /game_assets/plants/{plantId}/bud.png
    /game_assets/plants/{plantId}/bloomed.png
    ```
@@ -179,7 +177,7 @@ To add a new plant to the system:
    }
    ```
 
-2. (Optional) Upload 5 stage images to Firebase Storage
+2. (Optional) Upload 4 stage images to Firebase Storage
 
 3. The plant will automatically appear in user rotation - no code changes needed!
 
