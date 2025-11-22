@@ -17,29 +17,19 @@ export default defineConfig({
       // The manifest is key for the "Add to Home Screen" prompt
       manifest: {
         name: 'Project Reflect',
-        short_name: 'Reflect',
+        short_name: 'Project Reflect',
         description: 'A mindfulness and reflection app for your personal growth journey.',
-        theme_color: '#7c3aed',
-        background_color: '#fedaba',
+        theme_color: '#9333ea',
+        background_color: '#fef3e2',
         display: 'standalone',
         scope: '/',
         start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
+            src: '/square_logo.png',
+            sizes: 'any',
             type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'any maskable'
           }
         ],
       },
