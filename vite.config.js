@@ -26,7 +26,7 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/square_logo.png',
+            src: '/square_logo_large.png',
             sizes: 'any',
             type: 'image/png',
             purpose: 'any maskable'
