@@ -13,6 +13,7 @@ import { useState } from 'react';
 import ReflectionFlow from '../components/reflection/ReflectionFlow';
 import QuickThought from '../components/QuickThought';
 import PlantProgress from '../components/home/PlantProgress';
+import OnThisDay from '../components/home/OnThisDay';
 
 function HomePage() {
   const [showReflectionFlow, setShowReflectionFlow] = useState(false);
@@ -64,14 +65,7 @@ function HomePage() {
       />
 
       {/* On This Day Module */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <h3 className="font-nunito text-lg font-bold text-purple-900 mb-3">
-          On This Day
-        </h3>
-        <p className="font-nunito text-purple-700 italic">
-          No entries from previous years on this day... yet.
-        </p>
-      </div>
+      <OnThisDay />
 
       {/* Today's Question Module */}
       <div className="bg-orange-100 rounded-2xl shadow-sm p-6">
