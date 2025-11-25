@@ -19,7 +19,7 @@ A structured flow (Triage -> Meditation -> Journal) that adapts to your current 
 ## Installation
 ### Clone the repo
 ```
-git clone [https://github.com/yourusername/project-reflect.git](https://github.com/yourusername/project-reflect.git)
+git clone [https://github.com/jacksakers/projectreflect.git](https://github.com/jacksakers/projectreflect.git)
 cd project-reflect
 Install dependencies
 npm install
